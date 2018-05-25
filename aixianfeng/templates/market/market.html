@@ -1,0 +1,138 @@
+{% extends 'base_main.html' %}
+{% load static %}
+{% block extCSS %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'app/market/market.css' %}">
+{% endblock %}
+
+{% block EXTJS %}
+    <script type="text/javascript" src="{% static 'app/market/js/market.js' %}"></script>
+
+{% endblock %}
+
+
+{% block content %}
+
+    <div id="market">
+
+        <aside>
+
+            <ul>
+
+                <!--闪购分类展示-->
+                {% for foodtype in foodtypes %}
+                    <li>
+                        <!--链接地址，点击获取分类下的商品信息-->
+
+                        <a href="{% url "axf:market_filter" foodtype.typeid 0 0 %}">{{ foodtype.typename }}</a>
+                        {% ifequal foodtype.typeid typeid %}
+                            <span class="yellowSlide"></span>
+                        {% endifequal %}
+
+                    </li>
+                {% endfor %}
+
+                <!--处理数据结束-->
+
+            </ul>
+
+        </aside>
+
+
+        <section>
+            <nav>
+                <ul>
+                    <li id="all_types"><span>全部类型<span id="all_type_logo"
+                                                       class="glyphicon glyphicon-chevron-down"></span></span></li>
+                    <li id="sort_rule"><span>综合排序<span id="sort_rule_logo" class="glyphicon glyphicon-chevron-down"></span></span></li>
+                </ul>
+            </nav>
+
+            <menu>
+                <ul>
+                    {% for good in goods %}
+                    <!--商品信息展示-->
+                        <li>
+                            <a href="#">
+                                <img src="{{ good.productimg }}" alt="">
+                                <div class="shoppingInfo">
+                                    <h6>{{ good.productlongname }}</h6>
+                                    <p class="detailTag">
+                                        <span>精选</span>
+                                        <span>{{ good.specifics }}</span>
+                                    </p>
+                                    <p class="unit">
+
+                                    </p>
+                                    <p class="price">
+                                        <span>¥{{ good.price }}</span>
+                                        <s>¥{{ good.marketprice }}</s>
+                                    </p>
+                                </div>
+                            </a>
+                        <section>
+                            {% csrf_token %}
+                            <button goodsid="{{ good.id }}" class="subShopping">-</button>
+                            <span id="num_{{ good.id }}">
+                           
+                                {% for cart in good.cartmodel_set.all %}
+				    {% ifequal cart.user_id user.id %}	
+                                    {{ cart.c_num }}
+			            {% else %}
+				    0
+				    {% endifequal %}
+			        {% empty %}
+				 0   
+                                {% endfor %}
+                            
+                            </span>
+                            <button goodsid="{{ good.id }}" class="addShopping">+</button>
+                        </section>
+                        </li>
+                    {% endfor %}
+                    <!--处理数据结束-->
+                </ul>
+
+                <div id="all_types_container">
+                    <div>
+                        <!--加载全部分类的数据-->
+                        {% for childtype in childrentype %}
+                            <a href="{% url "axf:market_filter" typeid childtype.1 0 %}">
+                                <span>{{ childtype.0 }}</span>
+                            </a>
+                        {% endfor %}
+                        <!--处理数据结束-->
+
+
+                    </div>
+                </div>
+
+
+                <div id="sort_container">
+                    <div>
+{#      排序传递的也是状态码   0 , 1 ,2  , 3 ,4 ,5...                    #}
+                        <a href="{% url "axf:market_filter" typeid cid 0 %}">
+                            <span>综合排序</span>
+                        </a>
+                        <a href="{% url "axf:market_filter" typeid cid 1 %}">
+                            <span>销量排序</span>
+                        </a>
+                        <a href="{% url "axf:market_filter" typeid cid 2 %}">
+                            <span>价格降序</span>
+                        </a>
+                        <a href="{% url "axf:market_filter" typeid cid 3 %}">
+                            <span>价格升序</span>
+                        </a>
+
+                    </div>
+                </div>
+
+            </menu>
+
+        </section>
+
+
+    </div>
+    <script src="{% static "js/jquery.js" %}"></script>
+
+{% endblock %}
