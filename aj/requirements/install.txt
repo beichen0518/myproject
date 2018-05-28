@@ -1,0 +1,10 @@
+redis
+flask
+pymysql
+flask-session
+flask-script
+flask-blueprint
+flask-sqlalchemy
+flask-debugtoolbar
+flask-marshmallow
+flask-restful
